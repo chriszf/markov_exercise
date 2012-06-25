@@ -1,0 +1,7 @@
+# Introduction
+
+In this exercise, you'll be writing a program that performs Markov analysis on text files and produces text that mimics the style of the original author.
+
+Start this exercise by running:
+
+    ./stage1

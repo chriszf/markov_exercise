@@ -1,0 +1,5 @@
+__pycache__
+markov_solution.py
+markov_stage1.py
+*.pyc
+*.swp
