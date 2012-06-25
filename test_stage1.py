@@ -3,7 +3,9 @@ Tests
 """
 
 import markov
+import markov_solution
 import pytest
+import random
 
 def fn_exists(name):
     try:
@@ -142,7 +144,11 @@ The dictionary that it accepts is the markov mapping we produced in our process_
 
 Notice how we are explicit about inputs and return values from our function, and how the output of the other function is used as the input to this one. So far, we've been using global variables to store our intermediate values, which is considered a bad practice."""
 
-    assert markov.build_sentence({("this", "old"): ["man."]}) == "this old man.", """\
+    your_sentence = markov.build_sentence({("this", "old"): ["man."]})
+    expected = "this old man."
+    print "Expected sentence:", expected
+    print "Your sentence:", your_sentence
+    assert your_sentence == expected, """\
 To produce a random sentence from a markov mapping, we choose a random key/value pair from our map, which should look like this:
 
     ("word1", "word2") : ["word3"]
@@ -171,3 +177,48 @@ It should should then try to run markov analysis and build a single sentence fro
     hi there friend.
     
 You have to chain this behavior together in your main function, calling process_file and feeding the output of that into build_sentence, then printing the output of that."""
+
+
+def test_complex_input_1():
+    mapping = markov.process_file("sample3.txt")
+    output = {
+            ("how", "are"): ["you"],
+            ("are", "you"): ["doing?"]
+            }
+    print "Expected map:", output
+    print "Your map:", mapping
+    assert mapping == output, """\
+Now that we've done a full integration on our degenerate (basic) case, we're increasing complexity. Try to improve your 'process_file' function to process more than one prefix-suffix pair.
+
+Remember, a prefix consists of two words, and a suffix is a single word, so the maximum number of pairs that can be produced from three words is one.
+
+In general, if there are N words in the input, it should be possible to generate N-2 pairs."""
+
+def test_complex_input_2():
+    correct_map = markov_solution.build_chains("sample4.txt", 2)
+    print "Expected map:", correct_map
+    new_map = markov.process_file("sample4.txt")
+    print "Your map:", new_map
+
+    assert new_map == correct_map, """\
+The previous example tested a single line longer than 3 words, now update your function to work on a multiline file.
+
+Remember that calling string.split() with no arguments will automatically split on all whitespace, including newlines, tabs, and spaces."""
+
+def test_complex_input_3():
+    correct_map = markov_solution.build_chains("sample5.txt", 2)
+    new_map = markov.process_file("sample5.txt")
+
+    for key in correct_map.keys():
+        print "Expected: %r => %r"%(key, correct_map[key])
+        print "Received: %r => %r"%(key, new_map[key])
+        assert sorted(correct_map[key]) == sorted(new_map[key]), """\
+Sometimes a prefix will have more than allowable suffix, as in the following example:
+
+    Humpty Dumpty sat on a wall
+    Humpty Dumpty had a great fall
+
+    The prefix "Humpty Dumpty" can become either "sat" or "had".
+
+Make sure that your processing function can produce handle that scenario.
+"""
